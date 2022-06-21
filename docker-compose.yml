@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+    service-name:
+        container_name: 'container-name'
+        image: danielsrod/pg:14.2
+        restart: always
+        networks:
+            - 'container-network'
+        environment: 
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+        logging:
+          options:
+            max-size: 10m
+            max-file: "3"
+        ports:
+          - '5438:5432'
+        volumes:
+          # Postgres Data
+          - ./postgres-data:/var/lib/postgresql/data
+          # Run Scripts
+          - ./sql/generate_database.sql:/docker-entrypoint-initdb.d/generate_database.sql
+networks:
+    container-network:
+        ipam:
+            driver: default
+            config:
+                - subnet: "172.154.138.0/24"
